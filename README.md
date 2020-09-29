@@ -5,3 +5,6 @@ Here you may find the studies that I've done during Data Science Machine Learnin
 __Contents__:
 
 - Exploratory Data Analysis and Data Visualization
+
+
+__Note__: This site will be updated during the bootcamp.
