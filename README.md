@@ -8,6 +8,7 @@ __Contents__:
 - Scaler Functions (standard_scaler, robust_scaler)
 - Titanic - Exploratory Data Analysis & Data Preprocessing & Feature Engineering
 - Special Functions - Exploratory Data Analysis and Data Visualization
+- Special Functions - Data Preprocessing and Feature Engineering
 
 
 __Note__: This site will be updated during the bootcamp.
