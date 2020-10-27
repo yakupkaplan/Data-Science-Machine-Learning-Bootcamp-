@@ -10,6 +10,7 @@ __Contents__:
 - Special Functions - Exploratory Data Analysis and Data Visualization
 - Special Functions - Data Preprocessing and Feature Engineering
 - Classification Models
+- Unsupervised Learning
 
 
 __Note__: This site will be updated during the bootcamp.
