@@ -9,6 +9,7 @@ __Contents__:
 - Titanic - Exploratory Data Analysis & Data Preprocessing & Feature Engineering
 - Special Functions - Exploratory Data Analysis and Data Visualization
 - Special Functions - Data Preprocessing and Feature Engineering
+- Regression Models
 - Classification Models
 - Unsupervised Learning
 
