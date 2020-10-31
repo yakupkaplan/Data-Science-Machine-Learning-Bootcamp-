@@ -1,5 +1,19 @@
 # STATISTICS FOR DATA SCIENCE
 
+'''
+Subjects:
+    - Sample Theory
+    - Confidence Interval
+    - Probability Distributions
+    - Law of Large Numbers
+    - Hypothesis Tests
+        - One Sample T Test and Nonparametric One Sample Test (Sign Test)
+        - One and Two Sample(s) Porportion Test
+        - Independent Two Samples T Test and Nonparametric Independent Two Samples Test (If normality assumption is not satisfied! (Mannwhitneyu Test)) --> AB Testing
+            - Assumption Control --> 1.Normality Assumption, 2.Variance Homogenity
+        - Dependent Two Samples T Test and Nonparametric Dependent Two Samples (Wilcoxon Test)
+'''
+
 ### Sample Theory
 
 import numpy as np
@@ -135,15 +149,16 @@ import pylab
 stats.probplot(measurements, dist="norm", plot=pylab)
 pylab.show()
 
-## Shapiro-Wilks Test
+## Shapiro-Wilks Test (for Normality Assumption)
+
+from scipy.stats import shapiro
 
 # H0: Örnek dağılımı ile teorik normal dağılım arasında ist.ol.anl.bir fark.yoktur
 # H1: ...fark vardır
 
-from scipy.stats import shapiro
 shapiro(measurements)
-print("Normallik Testi İçin T Hesap İstatistiği: " + str(shapiro(measurements)[0]))
-print("Hesaplanan P-value: " + str(shapiro(measurements)[1]))
+print("T Statistics for Normality Test: " + str(shapiro(measurements)[0]))
+print("P-value: " + str(shapiro(measurements)[1]))
 0.78 < 0.05 # H0 can not be rejected.
 
 # p - value < ise 0.05 'ten HO RED.
@@ -165,7 +180,7 @@ stats.ttest_1samp(measurements, popmean=170)
 measurements.mean() # 154.38 So, we can say, that the mean is less than 170.
 
 
-## Nonparametric One Sample Test --> If the normality assumption is not satisfied.
+## Nonparametric One Sample Test (Sign Test) --> If the normality assumption is not satisfied.
 
 from statsmodels.stats.descriptivestats import sign_test
 
@@ -174,6 +189,7 @@ sign_test(measurements, 170)
 
 # p - value < ise 0.05 'ten HO RED.
 # p - value < değilse 0.05 H0 REDDEDILEMEZ.
+
 
 # One Sample Porportion Test
 
@@ -429,28 +445,103 @@ hypothesis_test_result(proportions_ztest(count=success_count, nobs=observation_c
 # THERE IS A DIFFERENCE between BUTTONS!
 
 
-### AB TESTING
+### Variance Analysis
 
-## PRICING
+# H0: M1 = M2 = M3 (grup ortalamalari arasinda ist anl. farklilik yoktur)
+# H1: Fark vardir.
 
-# A game company gave gift coins to its users for purchasing items in a game.
-# Using these virtual coins, users buy various vehicles for their characters.
-# The game company did not specify a price for an item and provided users to buy this item at the price they wanted.
-# For example, for the item named shield, users will buy this shield by paying the amounts they see fit.
-# For example, a user can pay with 30 units of virtual money given to him, while the other user can pay with 45 units.
-# Therefore, users can buy this item with the amounts they can afford to pay.
+A = pd.DataFrame([28,33,30,29,28,29,27,31,30,32,28,33,25,29,27,31,31,30,31,34,30,32,31,34,28,32,31,28,33,29])
+B = pd.DataFrame([31,32,30,30,33,32,34,27,36,30,31,30,38,29,30,34,34,31,35,35,33,30,28,29,26,37,31,28,34,33])
+C = pd.DataFrame([40,33,38,41,42,43,38,35,39,39,36,34,35,40,38,36,39,36,33,35,38,35,40,40,39,38,38,43,40,42])
+dfs = [A, B, C]
 
-# Problems to be solved:
-# 1. Does the item's price differ by category? Express it statistically.
-# 2. What should the price of the item be depending on the first question? Explain why?
-# 3. It is desirable to be "mobile" about the price. Create a decision support system for the price strategy and
-# 4. Simulate item purchases and income for possible price changes.
+ABC = pd.concat(dfs, axis = 1)
+ABC.columns = ["GROUP_A", "GROUP_B", "GROUP_C"]
+ABC.head()
 
-df = pd.read_csv("datasets/pricing.csv", sep=";")
+
+# Assumption Control
+
+shapiro(ABC["GROUP_A"])
+shapiro(ABC["GROUP_B"])
+shapiro(ABC["GROUP_C"])
+stats.levene(ABC["GROUP_A"], ABC["GROUP_B"], ABC["GROUP_C"])
+hypothesis_test_result(stats.levene(ABC["GROUP_A"], ABC["GROUP_B"], ABC["GROUP_C"]))
+
+# Hypothesis Test
+
+from scipy.stats import f_oneway
+
+f_oneway(ABC["GROUP_A"], ABC["GROUP_B"], ABC["GROUP_C"])
+print('{:.5f}'.format(f_oneway(ABC["GROUP_A"], ABC["GROUP_B"], ABC["GROUP_C"])))
+
+hypothesis_test_result((f_oneway(ABC["GROUP_A"], ABC["GROUP_B"], ABC["GROUP_C"])))
+
+ABC.describe().T
+
+
+## Nonparametric Variance Analysis (Kruskal Test)
+
+from scipy.stats import kruskal
+
+kruskal(ABC["GRUP_A"], ABC["GRUP_B"],ABC["GRUP_C"])
+hypothesis_test_result((kruskal(ABC["GRUP_A"], ABC["GRUP_B"],ABC["GRUP_C"])))
+
+
+### Correlation Analysis
+
+# Load the dataset
+tips = sns.load_dataset('tips')
+df = tips.copy()
 df.head()
 
-df["price"].describe()
-df["category_id"].value_counts()
-df.groupby("category_id").agg({"price": [np.mean, np.median]})
+# Calculate total bill
+df["total_bill"] = df["total_bill"] - df["tip"]
+df.head()
+
+# Visualization
+df.plot.scatter("tip", "total_bill")
+plt.show()
+
+
+# Assumption Control
+
+test_statistics, pvalue = shapiro(df["tip"])
+print('Test Statistics = %.4f, p-value = %.4f' % (test_statistics, pvalue))
+
+hypothesis_test_result(shapiro(df["tip"]))
+
+test_statistics, pvalue = shapiro(df["total_bill"])
+print('Test Statistics = %.4f, p-value = %.4f' % (test_statistics, pvalue))
+
+hypothesis_test_result(shapiro(df["total_bill"]))
+
+
+# Hypothesis Test
+
+# Correlation Coefficient
+df["tip"].corr(df["total_bill"])
+df["tip"].corr(df["total_bill"], method = "spearman")
+
+# Test for Meaningfulness of Correlation
+from scipy.stats.stats import pearsonr
+
+test_statistics, pvalue = pearsonr(df["tip"], df["total_bill"])
+print('Correlation Coefficient = %.4f, p-value = %.4f' % (test_statistics, pvalue))
+
+
+# Nonparametric Hypothesis Test
+
+from scipy.stats import stats
+
+stats.spearmanr(df["tip"], df["total_bill"])
+
+test_statistics, pvalue = stats.spearmanr(df["tip"], df["total_bill"])
+print('Correlation Coefficient = %.4f, p-value = %.4f' % (test_statistics, pvalue))
+
+test_statistics, pvalue = stats.kendalltau(df["tip"], df["total_bill"])
+print('Correlation Coefficient = %.4f, p-value = %.4f' % (test_statistics, pvalue))
+
+
 
 
