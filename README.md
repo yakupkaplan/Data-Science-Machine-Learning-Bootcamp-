@@ -14,6 +14,7 @@ __Contents__:
 - 8 Unsupervised Learning
 - 9 Statisctics for Data Science
 - 10 Natural Language Processing
+- 11 Big Data
 
 
 __Note__: This site will be updated during the bootcamp.
