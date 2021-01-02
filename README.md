@@ -4,6 +4,7 @@ Here you may find the notes and studies that I've done during Data Science Machi
 
 __Contents__:
 
+- 0 Data Manipulation (numpy and pandas)
 - 1 Exploratory Data Analysis and Data Visualization
 - 2 Scaler Functions (standard_scaler, robust_scaler)
 - 3 Titanic - Exploratory Data Analysis & Data Preprocessing & Feature Engineering
