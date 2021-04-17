@@ -17,5 +17,3 @@ __Contents__:
 - 10 Natural Language Processing
 - 11 Big Data - PySpark
 
-
-__Note__: This site will be updated during the bootcamp.
